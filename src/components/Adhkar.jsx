@@ -371,7 +371,16 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
     ]
   }
 
-  const [adhkar, setAdhkar] = useState(initialAdhkarData)
+  const getOrderedAdhkarData = (data) => {
+    return Object.fromEntries(
+      Object.entries(data).map(([category, items]) => [
+        category,
+        items.map((item, index) => ({ ...item, originalOrder: index }))
+      ])
+    )
+  }
+
+  const [adhkar, setAdhkar] = useState(getOrderedAdhkarData(initialAdhkarData))
   const [successVisible, setSuccessVisible] = useState(false)
 
   const currentCategoryAdhkar = adhkar[selectedCategory] || []
@@ -380,7 +389,7 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
   const handleResetCategory = () => {
     setAdhkar(prev => ({
       ...prev,
-      [selectedCategory]: initialAdhkarData[selectedCategory]
+      [selectedCategory]: getOrderedAdhkarData({ [selectedCategory]: initialAdhkarData[selectedCategory] })[selectedCategory]
     }))
     setSuccessVisible(false)
   }
@@ -421,14 +430,22 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
         return item
       })
 
+      const reorderedList = updatedList
+        .slice()
+        .sort((a, b) => {
+          if (a.count === 0 && b.count > 0) return 1
+          if (a.count > 0 && b.count === 0) return -1
+          return (a.originalOrder ?? 0) - (b.originalOrder ?? 0)
+        })
+
       // Check if all are done
-      const allDone = updatedList.every(item => item.count === 0)
+      const allDone = reorderedList.every(item => item.count === 0)
       if (allDone) {
         setSuccessVisible(true)
         if ('vibrate' in navigator) navigator.vibrate([80, 80, 80])
       }
 
-      return { ...prev, [selectedCategory]: updatedList }
+      return { ...prev, [selectedCategory]: reorderedList }
     })
   }
 
@@ -476,6 +493,7 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
 
             return (
               <div 
+                id={`adhkar-card-${item.id}`}
                 key={item.id}
                 onClick={() => handleCardClick(item.id)}
                 className="zekr-card"

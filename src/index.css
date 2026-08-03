@@ -67,6 +67,17 @@
   --stack-md: 24px;
   --container-padding: 24px;
   --stack-lg: 48px;
+}
+
+@media (max-width: 480px) {
+  :root {
+    --container-padding: 16px;
+    --stack-md: 18px;
+    --stack-lg: 32px;
+  }
+}
+
+:root.dark {
 
   /* Radius Tokens */
   --radius-sm: 0.25rem;
@@ -134,15 +145,18 @@
 }
 
 body {
+  margin: 0;
   background-color: var(--background);
   color: var(--on-surface);
   font-family: var(--font-body);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
+  min-height: 100dvh;
   direction: rtl;
   overflow-x: hidden;
+}
+
+#root {
+  min-height: 100dvh;
+  width: 100%;
 }
 
 /* Scrollbars */
@@ -173,7 +187,9 @@ body {
 .app-container {
   width: 100%;
   max-width: 480px;
-  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: 100svh;
+  margin: 0 auto;
   background-color: var(--background);
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.05);
   display: flex;
@@ -185,6 +201,16 @@ body {
 @media (max-width: 480px) {
   .app-container {
     box-shadow: none;
+    max-width: none;
+    min-height: 100dvh;
+  }
+
+  .glass-header {
+    padding-inline: max(12px, env(safe-area-inset-left));
+  }
+
+  .navbar-glass {
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
   }
 }
 
