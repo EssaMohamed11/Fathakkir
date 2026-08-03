@@ -1,10 +1,57 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import NavBar from './components/NavBar'
 import Home from './components/Home'
 import Adhkar from './components/Adhkar'
 import Tasbih from './components/Tasbih'
 import Settings from './components/Settings'
 import Salaf from './components/Salaf'
+import InstallPrompt from './InstallPrompt'
+
+const getSavedBoolean = (key, fallback) => {
+  const saved = localStorage.getItem(key)
+  if (saved === null) return fallback
+  return saved === 'true'
+}
+
+const getNextTriggerDelay = (hour, minute) => {
+  const now = new Date()
+  const target = new Date(now)
+  target.setHours(hour, minute, 0, 0)
+  if (target <= now) target.setDate(target.getDate() + 1)
+  return target.getTime() - now.getTime()
+}
+
+const parseTimeValue = (timeValue) => {
+  const [hour, minute] = timeValue.split(':').map((value) => parseInt(value, 10))
+  return { hour, minute }
+}
+
+const showNotification = async (title, body) => {
+  if (typeof window === 'undefined' || !('Notification' in window)) return
+  if (Notification.permission !== 'granted') return
+
+  const options = {
+    body,
+    icon: '/icons/icon-192.svg',
+    badge: '/icons/icon-192.svg',
+    tag: 'fathakkir-adhkar',
+    renotify: true
+  }
+
+  if ('serviceWorker' in navigator) {
+    const registration = await navigator.serviceWorker.ready
+    registration.showNotification(title, options)
+  } else {
+    new Notification(title, options)
+  }
+}
+
+const requestNotificationPermission = async () => {
+  if (typeof window === 'undefined' || !('Notification' in window)) return 'denied'
+  return Notification.permission === 'granted'
+    ? 'granted'
+    : await Notification.requestPermission()
+}
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home')
@@ -21,6 +68,18 @@ export default function App() {
     return saved ? saved === 'true' : false
   })
 
+  const [morningNotif, setMorningNotif] = useState(() => getSavedBoolean('fathakkir_morning_notif', true))
+  const [eveningNotif, setEveningNotif] = useState(() => getSavedBoolean('fathakkir_evening_notif', true))
+  const [morningTime, setMorningTime] = useState(() => localStorage.getItem('fathakkir_morning_time') || '06:00')
+  const [eveningTime, setEveningTime] = useState(() => localStorage.getItem('fathakkir_evening_time') || '18:00')
+  const [notificationPermission, setNotificationPermission] = useState(() => {
+    if (typeof window === 'undefined' || !('Notification' in window)) return 'denied'
+    return Notification.permission
+  })
+
+  const morningTimeout = useRef(null)
+  const eveningTimeout = useRef(null)
+
   useEffect(() => {
     localStorage.setItem('fathakkir_font_size', fontSize.toString())
   }, [fontSize])
@@ -34,6 +93,79 @@ export default function App() {
     }
   }, [isDarkMode])
 
+  useEffect(() => {
+    localStorage.setItem('fathakkir_morning_notif', morningNotif.toString())
+    scheduleReminder('morning')
+  }, [morningNotif, morningTime, notificationPermission])
+
+  useEffect(() => {
+    localStorage.setItem('fathakkir_evening_notif', eveningNotif.toString())
+    scheduleReminder('evening')
+  }, [eveningNotif, eveningTime, notificationPermission])
+
+  useEffect(() => {
+    localStorage.setItem('fathakkir_morning_time', morningTime)
+  }, [morningTime])
+
+  useEffect(() => {
+    localStorage.setItem('fathakkir_evening_time', eveningTime)
+  }, [eveningTime])
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('Notification' in window)) return
+    setNotificationPermission(Notification.permission)
+  }, [])
+
+  useEffect(() => {
+    scheduleReminder('morning')
+    scheduleReminder('evening')
+    return () => {
+      if (morningTimeout.current) clearTimeout(morningTimeout.current)
+      if (eveningTimeout.current) clearTimeout(eveningTimeout.current)
+    }
+  }, [notificationPermission])
+
+  const scheduleReminder = (period) => {
+    if (typeof window === 'undefined' || !('Notification' in window)) return
+    if (Notification.permission !== 'granted') return
+
+    const isEnabled = period === 'morning' ? morningNotif : eveningNotif
+    if (!isEnabled) return
+
+    const timeValue = period === 'morning' ? morningTime : eveningTime
+    const { hour, minute } = parseTimeValue(timeValue)
+    const delay = getNextTriggerDelay(hour, minute)
+    const targetText = period === 'morning' ? 'أذكار الصباح' : 'أذكار المساء'
+
+    const timeoutRef = period === 'morning' ? morningTimeout : eveningTimeout
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+
+    timeoutRef.current = window.setTimeout(async () => {
+      await showNotification(targetText, `الوقت الآن لأذكار ${period === 'morning' ? 'الصباح' : 'المساء'}، افتح التطبيق واذكر الله.`)
+      scheduleReminder(period)
+    }, delay)
+  }
+
+  const requestNotificationPermissionIfNeeded = async () => {
+    const result = await requestNotificationPermission()
+    setNotificationPermission(result)
+    return result
+  }
+
+  const handleToggleNotification = async (period, value) => {
+    if (value && notificationPermission !== 'granted') {
+      const permission = await requestNotificationPermissionIfNeeded()
+      if (permission !== 'granted') {
+        return
+      }
+    }
+    if (period === 'morning') {
+      setMorningNotif(value)
+    } else {
+      setEveningNotif(value)
+    }
+  }
+
   const renderActiveScreen = () => {
     if (showSettings) {
       return (
@@ -42,6 +174,14 @@ export default function App() {
           setFontSize={setFontSize}
           isDarkMode={isDarkMode}
           setIsDarkMode={setIsDarkMode}
+          morningNotif={morningNotif}
+          eveningNotif={eveningNotif}
+          morningTime={morningTime}
+          eveningTime={eveningTime}
+          setMorningTime={setMorningTime}
+          setEveningTime={setEveningTime}
+          onToggleNotification={handleToggleNotification}
+          notificationPermission={notificationPermission}
         />
       )
     }
@@ -84,18 +224,18 @@ export default function App() {
   const getScreenTitle = () => {
     if (showSettings) return 'الإعدادات'
     switch (activeTab) {
-      case 'home': return 'فذكر'
+      case 'home': return 'فذكِّر'
       case 'adhkar': return 'الأذكار'
       case 'tasbih': return 'المسبحة'
       case 'quran': return 'القرآن الكريم'
       case 'salaf': return 'سير الصالحين'
-      default: return 'فذكر'
+      default: return 'فذكِّر'
     }
   }
 
   return (
     <div className="app-container">
-      
+      <InstallPrompt />
       {/* Top Header */}
       <header className="glass-header">
         <div className="flex items-center justify-between px-container-padding py-4 max-w-2xl mx-auto w-full">

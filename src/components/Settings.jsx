@@ -1,14 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-export default function Settings({ fontSize, setFontSize, isDarkMode, setIsDarkMode }) {
-  const [morningNotif, setMorningNotif] = useState(true)
-  const [eveningNotif, setEveningNotif] = useState(true)
+export default function Settings({ fontSize, setFontSize, isDarkMode, setIsDarkMode, morningNotif, eveningNotif, morningTime, eveningTime, setMorningTime, setEveningTime, onToggleNotification, notificationPermission }) {
 
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'تطبيق فذكر',
-        text: 'تطبيق فذكر للأذكار والتسبيح وقراءة القرآن الكريم',
+        title: 'تطبيق فذكِّر',
+        text: 'تطبيق فذكِّر للأذكار والتسبيح وقراءة القرآن الكريم',
         url: window.location.origin
       })
     } else {
@@ -44,42 +42,76 @@ export default function Settings({ fontSize, setFontSize, isDarkMode, setIsDarkM
 
         <div style={cardStyle} className="p-5 space-y-6">
           {/* Row 1 */}
-          <div className="flex items-center justify-between">
-            <div className="text-right">
-              <span className="font-body-lg block font-semibold" style={rowTitleStyle}>أذكار الصباح</span>
-              <span className="block mt-0.5" style={rowSubtitleStyle}>تذكير يومي في الصباح الباكر</span>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="text-right">
+                <span className="font-body-lg block font-semibold" style={rowTitleStyle}>أذكار الصباح</span>
+                <span className="block mt-0.5" style={rowSubtitleStyle}>تذكير يومي في الوقت الذي تختاره</span>
+              </div>
+              <label className="switch-container">
+                <input 
+                  type="checkbox" 
+                  className="switch-input" 
+                  checked={morningNotif} 
+                  onChange={(e) => onToggleNotification('morning', e.target.checked)} 
+                />
+                <span className="switch-slider"></span>
+              </label>
             </div>
-            <label className="switch-container">
-              <input 
-                type="checkbox" 
-                className="switch-input" 
-                checked={morningNotif} 
-                onChange={(e) => setMorningNotif(e.target.checked)} 
+            <div className="text-right">
+              <label className="font-body-md block mb-2" style={rowSubtitleStyle}>وقت التذكير</label>
+              <input
+                type="time"
+                value={morningTime}
+                onChange={(e) => setMorningTime(e.target.value)}
+                className="w-full rounded-xl border px-4 py-3"
+                style={{ color: 'var(--on-surface)', backgroundColor: 'var(--surface-container)', borderColor: 'rgba(196,201,207,0.4)' }}
               />
-              <span className="switch-slider"></span>
-            </label>
+            </div>
           </div>
 
           <div style={dividerStyle}></div>
 
           {/* Row 2 */}
-          <div className="flex items-center justify-between">
-            <div className="text-right">
-              <span className="font-body-lg block font-semibold" style={rowTitleStyle}>أذكار المساء</span>
-              <span className="block mt-0.5" style={rowSubtitleStyle}>تذكير يومي بالمساء وقبل الغروب</span>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="text-right">
+                <span className="font-body-lg block font-semibold" style={rowTitleStyle}>أذكار المساء</span>
+                <span className="block mt-0.5" style={rowSubtitleStyle}>تذكير يومي في الوقت الذي تختاره</span>
+              </div>
+              <label className="switch-container">
+                <input 
+                  type="checkbox" 
+                  className="switch-input" 
+                  checked={eveningNotif} 
+                  onChange={(e) => onToggleNotification('evening', e.target.checked)} 
+                />
+                <span className="switch-slider"></span>
+              </label>
             </div>
-            <label className="switch-container">
-              <input 
-                type="checkbox" 
-                className="switch-input" 
-                checked={eveningNotif} 
-                onChange={(e) => setEveningNotif(e.target.checked)} 
+            <div className="text-right">
+              <label className="font-body-md block mb-2" style={rowSubtitleStyle}>وقت التذكير</label>
+              <input
+                type="time"
+                value={eveningTime}
+                onChange={(e) => setEveningTime(e.target.value)}
+                className="w-full rounded-xl border px-4 py-3"
+                style={{ color: 'var(--on-surface)', backgroundColor: 'var(--surface-container)', borderColor: 'rgba(196,201,207,0.4)' }}
               />
-              <span className="switch-slider"></span>
-            </label>
+            </div>
           </div>
         </div>
       </section>
+
+      {notificationPermission !== 'granted' && (
+        <section className="space-y-3 text-right">
+          <div style={cardStyle} className="p-5">
+            <p style={{ color: 'var(--on-surface)', fontSize: '14px', lineHeight: 1.7 }}>
+              لم يتم منح التطبيق إذن الإشعارات. للتذكيرات اليومية، فعّل الإشعارات من إعدادات المتصفح.
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* SECTION 2: Appearance */}
       <section className="space-y-3 text-right">
@@ -167,7 +199,7 @@ export default function Settings({ fontSize, setFontSize, isDarkMode, setIsDarkM
               <span className="material-symbols-outlined" style={{ color: 'var(--on-surface-variant)' }}>info</span>
               <div>
                 <span className="font-body-lg font-semibold block" style={rowTitleStyle}>عن التطبيق</span>
-                <span style={{ ...rowSubtitleStyle }}>فذكر - نسخة 1.0</span>
+                <span style={{ ...rowSubtitleStyle }}>فذكِّر - نسخة 1.0</span>
               </div>
             </div>
             <span className="material-symbols-outlined" style={{ color: 'var(--outline)' }}>chevron_left</span>

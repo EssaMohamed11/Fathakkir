@@ -28,7 +28,7 @@ export default function Header({ isDarkMode, setIsDarkMode }) {
         letterSpacing: '-0.5px',
         margin: 0
       }}>
-        فذكر
+        فذكِّر
       </h1>
 
       {/* Dark Mode Quick Toggle (Left side in RTL) */}

@@ -23,7 +23,9 @@ export default function Home({ setActiveTab, setSelectedCategory }) {
       {/* 1. Welcome Section */}
       <section className="mt-stack-md text-right mb-6">
         <h2 className="font-body-ar text-on-surface mb-2">مرحباً بك مجدداً</h2>
-        <p className="font-body-md text-on-surface-variant">"ألا بذكر الله تطمئن القلوب"</p>
+        <p className="font-body-md text-on-surface mb-3" style={{ fontSize: '18px', lineHeight: 1.8, margin: 0 }}>
+          “ ﴿وَذَكِّرْ فَإِنَّ الذِّكْرَىٰ تَنفَعُ الْمُؤْمِنِينَ﴾ ”
+        </p>
       </section>
 
       {/* 2. Hero Card — always deep blue bg with white text */}
@@ -119,21 +121,8 @@ export default function Home({ setActiveTab, setSelectedCategory }) {
 
       {/* 4. Daily Verse */}
       <section 
-        className="mt-stack-lg mb-8 p-6 rounded-3xl text-center"
-        style={{ 
-          backgroundColor: 'var(--surface-container-low)', 
-          border: '1px solid var(--outline-variant)' 
-        }}
+        className="hidden"
       >
-        <span className="material-symbols-outlined mb-2" style={{ color: 'var(--primary)', fontSize: '28px' }}>
-          format_quote
-        </span>
-        <p className="font-body-ar leading-relaxed" style={{ color: 'var(--on-surface)', fontSize: '16px' }}>
-          "فاذكروني أذكركم واشكروا لي ولا تكفرون"
-        </p>
-        <p className="font-label-sm mt-3" style={{ color: 'var(--on-surface-variant)' }}>
-          [ سورة البقرة: 152 ]
-        </p>
       </section>
 
       {/* 5. Salaf Quotes */}
