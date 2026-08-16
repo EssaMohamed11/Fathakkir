@@ -551,24 +551,39 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
 
       <main className="max-w-2xl mx-auto px-container-padding pb-48 pt-6">
         
-        {/* Category Tab Selector */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar py-2 mb-6">
-          {categories.map((cat) => {
-            const isActive = selectedCategory === cat.key
-            return (
-              <button
-                key={cat.key}
-                onClick={() => setSelectedCategory(cat.key)}
-                className="px-6 py-2 rounded-full font-label-sm text-label-sm whitespace-nowrap active:scale-95 transition-all border-none cursor-pointer"
-                style={{
-                  backgroundColor: isActive ? 'var(--primary)' : 'var(--surface-container-high)',
-                  color: isActive ? 'var(--on-primary)' : 'var(--on-surface-variant)'
-                }}
-              >
-                {cat.label}
-              </button>
-            )
-          })}
+        {/* Category Tab Selector & Reset Action */}
+        <div className="flex items-center justify-between gap-2 mb-6">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar py-2 flex-1">
+            {categories.map((cat) => {
+              const isActive = selectedCategory === cat.key
+              return (
+                <button
+                  key={cat.key}
+                  onClick={() => setSelectedCategory(cat.key)}
+                  className="px-6 py-2 rounded-full font-label-sm text-label-sm whitespace-nowrap active:scale-95 transition-all border-none cursor-pointer"
+                  style={{
+                    backgroundColor: isActive ? 'var(--primary)' : 'var(--surface-container-high)',
+                    color: isActive ? 'var(--on-primary)' : 'var(--on-surface-variant)'
+                  }}
+                >
+                  {cat.label}
+                </button>
+              )
+            })}
+          </div>
+
+          <button
+            onClick={handleResetCategory}
+            className="px-4 py-2 rounded-full font-label-sm text-xs whitespace-nowrap active:scale-95 transition-all border-none cursor-pointer flex items-center gap-1 shrink-0"
+            style={{
+              backgroundColor: 'var(--secondary-container)',
+              color: 'var(--on-secondary-container)'
+            }}
+            title="إعادة تصفير أذكار هذا القسم"
+          >
+            <span className="material-symbols-outlined text-base">restart_alt</span>
+            <span>إعادة البدء</span>
+          </button>
         </div>
 
         {/* Adhkar Cards */}
@@ -655,12 +670,11 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
       {/* Success Overlay */}
       {successVisible && (
         <div 
-          onClick={handleResetCategory}
           className="fixed inset-0 z-50 flex items-center justify-center transition-opacity"
-          style={{ backgroundColor: 'var(--background)', opacity: 0.98, backdropFilter: 'blur(8px)' }}
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)', backdropFilter: 'blur(8px)' }}
         >
           <div 
-            className="px-10 py-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4 text-center border"
+            className="px-8 py-7 rounded-3xl shadow-2xl flex flex-col items-center gap-4 text-center border max-w-sm mx-4"
             style={{ 
               backgroundColor: 'var(--surface-container-lowest)',
               borderColor: 'var(--outline-variant)' 
@@ -668,14 +682,33 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
           >
             <div 
               className="w-16 h-16 rounded-full flex items-center justify-center" 
-              style={{ backgroundColor: 'var(--primary)', color: 'var(--on-primary)' }}
+              style={{ backgroundColor: '#10b981', color: '#ffffff' }}
             >
               <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                 check_circle
               </span>
             </div>
-            <p className="font-headline-md" style={{ color: 'var(--primary)' }}>أحسنت!</p>
-            <p style={{ color: 'var(--on-surface-variant)', fontSize: '14px' }}>تقبل الله منك صالح الأعمال. اضغط هنا لإعادة البدء.</p>
+            <p className="font-headline-md" style={{ color: 'var(--primary)', fontSize: '22px', fontWeight: '700' }}>أحسنت وتقبل الله!</p>
+            <p style={{ color: 'var(--on-surface-variant)', fontSize: '14px', lineHeight: 1.6 }}>
+              أتممت قراءة {categories.find(c => c.key === selectedCategory)?.label || 'الأذكار'} بنجاح.
+            </p>
+            <div className="flex gap-3 w-full mt-2">
+              <button 
+                onClick={handleResetCategory}
+                className="flex-1 py-3 px-4 rounded-xl font-bold text-sm border-none cursor-pointer flex items-center justify-center gap-2 active:scale-95 transition-all"
+                style={{ backgroundColor: 'var(--primary)', color: 'var(--on-primary)' }}
+              >
+                <span className="material-symbols-outlined text-base">restart_alt</span>
+                <span>إعادة القراءة الآن</span>
+              </button>
+              <button 
+                onClick={() => setSuccessVisible(false)}
+                className="py-3 px-4 rounded-xl font-bold text-sm border-none cursor-pointer active:scale-95 transition-all"
+                style={{ backgroundColor: 'var(--surface-container-high)', color: 'var(--on-surface-variant)' }}
+              >
+                إغلاق
+              </button>
+            </div>
           </div>
         </div>
       )}
