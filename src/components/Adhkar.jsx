@@ -574,15 +574,14 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
 
           <button
             onClick={handleResetCategory}
-            className="px-4 py-2 rounded-full font-label-sm text-xs whitespace-nowrap active:scale-95 transition-all border-none cursor-pointer flex items-center gap-1 shrink-0"
+            className="w-9 h-9 rounded-full flex items-center justify-center active:scale-90 transition-all border-none cursor-pointer shrink-0 shadow-sm"
             style={{
               backgroundColor: 'var(--secondary-container)',
               color: 'var(--on-secondary-container)'
             }}
             title="إعادة تصفير أذكار هذا القسم"
           >
-            <span className="material-symbols-outlined text-base">restart_alt</span>
-            <span>إعادة البدء</span>
+            <span className="material-symbols-outlined text-xl">restart_alt</span>
           </button>
         </div>
 
