@@ -71,8 +71,10 @@ export default function App() {
 
   const [morningNotif, setMorningNotif] = useState(() => getSavedBoolean('fathakkir_morning_notif', true))
   const [eveningNotif, setEveningNotif] = useState(() => getSavedBoolean('fathakkir_evening_notif', true))
+  const [sleepNotif, setSleepNotif] = useState(() => getSavedBoolean('fathakkir_sleep_notif', true))
   const [morningTime, setMorningTime] = useState(() => localStorage.getItem('fathakkir_morning_time') || '06:00')
   const [eveningTime, setEveningTime] = useState(() => localStorage.getItem('fathakkir_evening_time') || '18:00')
+  const [sleepTime, setSleepTime] = useState(() => localStorage.getItem('fathakkir_sleep_time') || '21:00')
   const [notificationPermission, setNotificationPermission] = useState(() => {
     if (typeof window === 'undefined' || !('Notification' in window)) return 'denied'
     return Notification.permission
@@ -80,6 +82,7 @@ export default function App() {
 
   const morningTimeout = useRef(null)
   const eveningTimeout = useRef(null)
+  const sleepTimeout = useRef(null)
 
   useEffect(() => {
     localStorage.setItem('fathakkir_font_size', fontSize.toString())
@@ -105,12 +108,21 @@ export default function App() {
   }, [eveningNotif, eveningTime, notificationPermission])
 
   useEffect(() => {
+    localStorage.setItem('fathakkir_sleep_notif', sleepNotif.toString())
+    scheduleReminder('sleep')
+  }, [sleepNotif, sleepTime, notificationPermission])
+
+  useEffect(() => {
     localStorage.setItem('fathakkir_morning_time', morningTime)
   }, [morningTime])
 
   useEffect(() => {
     localStorage.setItem('fathakkir_evening_time', eveningTime)
   }, [eveningTime])
+
+  useEffect(() => {
+    localStorage.setItem('fathakkir_sleep_time', sleepTime)
+  }, [sleepTime])
 
   useEffect(() => {
     if (typeof window === 'undefined' || !('Notification' in window)) return
@@ -120,9 +132,11 @@ export default function App() {
   useEffect(() => {
     scheduleReminder('morning')
     scheduleReminder('evening')
+    scheduleReminder('sleep')
     return () => {
       if (morningTimeout.current) clearTimeout(morningTimeout.current)
       if (eveningTimeout.current) clearTimeout(eveningTimeout.current)
+      if (sleepTimeout.current) clearTimeout(sleepTimeout.current)
     }
   }, [notificationPermission])
 
@@ -130,19 +144,20 @@ export default function App() {
     if (typeof window === 'undefined' || !('Notification' in window)) return
     if (Notification.permission !== 'granted') return
 
-    const isEnabled = period === 'morning' ? morningNotif : eveningNotif
+    const isEnabled = period === 'morning' ? morningNotif : (period === 'evening' ? eveningNotif : sleepNotif)
     if (!isEnabled) return
 
-    const timeValue = period === 'morning' ? morningTime : eveningTime
+    const timeValue = period === 'morning' ? morningTime : (period === 'evening' ? eveningTime : sleepTime)
     const { hour, minute } = parseTimeValue(timeValue)
     const delay = getNextTriggerDelay(hour, minute)
-    const targetText = period === 'morning' ? 'أذكار الصباح' : 'أذكار المساء'
+    const targetText = period === 'morning' ? 'أذكار الصباح' : (period === 'evening' ? 'أذكار المساء' : 'أذكار النوم')
+    const targetBody = `الوقت الآن لأذكار ${period === 'morning' ? 'الصباح' : (period === 'evening' ? 'المساء' : 'النوم')}، افتح التطبيق واذكر الله.`
 
-    const timeoutRef = period === 'morning' ? morningTimeout : eveningTimeout
+    const timeoutRef = period === 'morning' ? morningTimeout : (period === 'evening' ? eveningTimeout : sleepTimeout)
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
 
     timeoutRef.current = window.setTimeout(async () => {
-      await showNotification(targetText, `الوقت الآن لأذكار ${period === 'morning' ? 'الصباح' : 'المساء'}، افتح التطبيق واذكر الله.`)
+      await showNotification(targetText, targetBody)
       scheduleReminder(period)
     }, delay)
   }
@@ -162,8 +177,19 @@ export default function App() {
     }
     if (period === 'morning') {
       setMorningNotif(value)
-    } else {
+    } else if (period === 'evening') {
       setEveningNotif(value)
+    } else {
+      setSleepNotif(value)
+    }
+  }
+
+  const handleTestNotification = async () => {
+    const permission = await requestNotificationPermissionIfNeeded()
+    if (permission === 'granted') {
+      await showNotification('أذكار الصباح والمساء 🌸', 'اختبار الإشعارات: التنبيهات تعمل بنجاح على جهازك!')
+    } else {
+      alert('الرجاء السماح بالإشعارات في إعدادات المتصفح أو الهاتف أولاً.')
     }
   }
 
@@ -177,12 +203,16 @@ export default function App() {
           setIsDarkMode={setIsDarkMode}
           morningNotif={morningNotif}
           eveningNotif={eveningNotif}
+          sleepNotif={sleepNotif}
           morningTime={morningTime}
           eveningTime={eveningTime}
+          sleepTime={sleepTime}
           setMorningTime={setMorningTime}
           setEveningTime={setEveningTime}
+          setSleepTime={setSleepTime}
           onToggleNotification={handleToggleNotification}
           notificationPermission={notificationPermission}
+          onTestNotification={handleTestNotification}
         />
       )
     }

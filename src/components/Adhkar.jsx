@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 export default function Adhkar({ selectedCategory, setSelectedCategory }) {
   const categories = [
@@ -380,8 +380,93 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
     )
   }
 
-  const [adhkar, setAdhkar] = useState(getOrderedAdhkarData(initialAdhkarData))
+  const getTodayDateString = () => {
+    const d = new Date()
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const loadSavedAdhkarData = (initialOrderedData) => {
+    try {
+      const savedDate = localStorage.getItem('fathakkir_adhkar_date')
+      const today = getTodayDateString()
+
+      if (savedDate === today) {
+        const savedData = localStorage.getItem('fathakkir_adhkar_data')
+        if (savedData) {
+          const parsed = JSON.parse(savedData)
+          const merged = { ...initialOrderedData }
+
+          Object.keys(initialOrderedData).forEach(category => {
+            if (parsed[category] && Array.isArray(parsed[category])) {
+              const savedItemsMap = new Map(parsed[category].map(item => [item.id, item.count]))
+              merged[category] = initialOrderedData[category].map(item => {
+                const savedCount = savedItemsMap.get(item.id)
+                return {
+                  ...item,
+                  count: typeof savedCount === 'number' ? savedCount : item.count
+                }
+              })
+
+              merged[category].sort((a, b) => {
+                if (a.count === 0 && b.count > 0) return 1
+                if (a.count > 0 && b.count === 0) return -1
+                return (a.originalOrder ?? 0) - (b.originalOrder ?? 0)
+              })
+            }
+          })
+          return merged
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load saved adhkar data', e)
+    }
+    return initialOrderedData
+  }
+
+  const [adhkar, setAdhkar] = useState(() => {
+    const orderedInitial = getOrderedAdhkarData(initialAdhkarData)
+    return loadSavedAdhkarData(orderedInitial)
+  })
   const [successVisible, setSuccessVisible] = useState(false)
+
+  // Save progress to localStorage whenever adhkar changes
+  useEffect(() => {
+    try {
+      const today = getTodayDateString()
+      localStorage.setItem('fathakkir_adhkar_date', today)
+
+      const dataToSave = Object.fromEntries(
+        Object.entries(adhkar).map(([cat, items]) => [
+          cat,
+          items.map(item => ({ id: item.id, count: item.count }))
+        ])
+      )
+      localStorage.setItem('fathakkir_adhkar_data', JSON.stringify(dataToSave))
+    } catch (e) {
+      console.error('Failed to save adhkar progress', e)
+    }
+  }, [adhkar])
+
+  // Reset progress when day changes (e.g. at midnight or upon app focus)
+  useEffect(() => {
+    const checkAndResetNewDay = () => {
+      const savedDate = localStorage.getItem('fathakkir_adhkar_date')
+      const today = getTodayDateString()
+      if (savedDate && savedDate !== today) {
+        const freshData = getOrderedAdhkarData(initialAdhkarData)
+        setAdhkar(freshData)
+        localStorage.setItem('fathakkir_adhkar_date', today)
+        localStorage.setItem('fathakkir_adhkar_data', JSON.stringify({}))
+      }
+    }
+
+    checkAndResetNewDay()
+    window.addEventListener('focus', checkAndResetNewDay)
+    return () => window.removeEventListener('focus', checkAndResetNewDay)
+  }, [])
 
   const currentCategoryAdhkar = adhkar[selectedCategory] || []
 

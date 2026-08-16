@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Settings({ fontSize, setFontSize, isDarkMode, setIsDarkMode, morningNotif, eveningNotif, morningTime, eveningTime, setMorningTime, setEveningTime, onToggleNotification, notificationPermission }) {
+export default function Settings({ fontSize, setFontSize, isDarkMode, setIsDarkMode, morningNotif, eveningNotif, sleepNotif, morningTime, eveningTime, sleepTime, setMorningTime, setEveningTime, setSleepTime, onToggleNotification, notificationPermission, onTestNotification }) {
 
   const handleShare = () => {
     if (navigator.share) {
@@ -100,6 +100,49 @@ export default function Settings({ fontSize, setFontSize, isDarkMode, setIsDarkM
               />
             </div>
           </div>
+
+          <div style={dividerStyle}></div>
+
+          {/* Row 3 */}
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="text-right">
+                <span className="font-body-lg block font-semibold" style={rowTitleStyle}>أذكار النوم</span>
+                <span className="block mt-0.5" style={rowSubtitleStyle}>تذكير يومي قبل النوم في الوقت الذي تختاره</span>
+              </div>
+              <label className="switch-container">
+                <input 
+                  type="checkbox" 
+                  className="switch-input" 
+                  checked={sleepNotif} 
+                  onChange={(e) => onToggleNotification('sleep', e.target.checked)} 
+                />
+                <span className="switch-slider"></span>
+              </label>
+            </div>
+            <div className="text-right">
+              <label className="font-body-md block mb-2" style={rowSubtitleStyle}>وقت التذكير</label>
+              <input
+                type="time"
+                value={sleepTime}
+                onChange={(e) => setSleepTime(e.target.value)}
+                className="w-full rounded-xl border px-4 py-3"
+                style={{ color: 'var(--on-surface)', backgroundColor: 'var(--surface-container)', borderColor: 'rgba(196,201,207,0.4)' }}
+              />
+            </div>
+          </div>
+
+          <div style={dividerStyle}></div>
+
+          {/* Test Notification Button */}
+          <button
+            onClick={onTestNotification}
+            className="w-full rounded-xl py-3.5 px-4 font-label-sm flex items-center justify-center gap-2 border-none cursor-pointer active:scale-95 transition-all shadow-sm"
+            style={{ backgroundColor: 'var(--primary-container)', color: 'var(--on-primary-container)', fontWeight: '700' }}
+          >
+            <span className="material-symbols-outlined text-base">notifications_active</span>
+            <span>تجربة إرسال إشعار تجريبي الآن</span>
+          </button>
         </div>
       </section>
 
