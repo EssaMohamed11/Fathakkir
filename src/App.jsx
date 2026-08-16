@@ -30,10 +30,11 @@ const showNotification = async (title, body) => {
   if (typeof window === 'undefined' || !('Notification' in window)) return
   if (Notification.permission !== 'granted') return
 
+  const logoPath = `${import.meta.env.BASE_URL}icons/logo.png`
   const options = {
     body,
-    icon: '/icons/icon-192.svg',
-    badge: '/icons/icon-192.svg',
+    icon: logoPath,
+    badge: logoPath,
     tag: 'fathakkir-adhkar',
     renotify: true
   }
@@ -249,10 +250,21 @@ export default function App() {
             </button>
           ) : (
             <div 
-              className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden" 
+              className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden shadow-sm" 
               style={{ backgroundColor: 'var(--secondary-container)' }}
             >
-              <span style={{ fontSize: '20px' }}>🕌</span>
+              <img 
+                src={`${import.meta.env.BASE_URL}icons/logo.png`} 
+                alt="فذكِّر" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  if (e.currentTarget.nextElementSibling) {
+                    e.currentTarget.nextElementSibling.style.display = 'block';
+                  }
+                }}
+              />
+              <span style={{ fontSize: '20px', display: 'none' }}>🕌</span>
             </div>
           )}
 

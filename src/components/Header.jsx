@@ -13,10 +13,21 @@ export default function Header({ isDarkMode, setIsDarkMode }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '20px',
+          overflow: 'hidden',
           boxShadow: 'var(--shadow-sm)'
         }}>
-          🕌
+          <img 
+            src={`${import.meta.env.BASE_URL}icons/logo.png`} 
+            alt="فذكِّر" 
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              if (e.currentTarget.nextElementSibling) {
+                e.currentTarget.nextElementSibling.style.display = 'block';
+              }
+            }}
+          />
+          <span style={{ fontSize: '20px', display: 'none' }}>🕌</span>
         </div>
       </div>
 

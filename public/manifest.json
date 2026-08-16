@@ -2,15 +2,19 @@
   "name": "فذكِّر",
   "short_name": "فذكِّر",
   "description": "تطبيق أذكار وقراءة القرآن الكريم",
-  "start_url": ".",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#1a365d",
   "theme_color": "#1a365d",
-  "display": "standalone",
-  "scope": "/Fathakkir/",
-  "start_url": ".",
   "categories": ["productivity", "lifestyle"],
   "icons": [
+    {
+      "src": "icons/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "icons/icon-192.svg",
       "sizes": "192x192",
@@ -20,11 +24,6 @@
       "src": "icons/icon-512.svg",
       "sizes": "512x512",
       "type": "image/svg+xml"
-    },
-    {
-      "src": "icons/icon-512.svg",
-      "sizes": "512x512",
-      "type": "image/png"
     }
   ],
   "shortcuts": [
