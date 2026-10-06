@@ -91,14 +91,6 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
         benefit: 'تكرر 3 مرات لسؤال الله العافية التامة.'
       },
       {
-        id: 'm_hasbi',
-        title: 'الكفاية والتوكل',
-        text: 'حسبي الله لا اله الا هو عليه توكلت وهو رب العرش العظيم',
-        count: 7,
-        maxCount: 7,
-        benefit: 'من قالها سبعاً كفاه الله ما أهمه من أمر الدنيا والآخرة.'
-      },
-      {
         id: 'm_radeet',
         title: 'الرضا بالله رباً',
         text: 'رضيت بالله رباً وبالاسلام ديناً وبمحمد صلى الله عليه وسلم نبياً ورسولا',
@@ -121,6 +113,14 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
         count: 3,
         maxCount: 3,
         benefit: 'وقاية من كل مكروه وسوء وهامة.'
+      },
+      {
+        id: 'm_hasbi',
+        title: 'الكفاية والتوكل',
+        text: 'حسبي الله لا اله الا هو عليه توكلت وهو رب العرش العظيم',
+        count: 7,
+        maxCount: 7,
+        benefit: 'من قالها سبعاً كفاه الله ما أهمه من أمر الدنيا والآخرة.'
       },
       {
         id: 'm_salawat',
@@ -148,14 +148,6 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
       }
     ],
     evening: [
-      {
-        id: 'e_tasbih',
-        title: 'التسبيح والتحميد',
-        text: 'سبحان الله وبحمده.',
-        count: 100,
-        maxCount: 100,
-        benefit: 'من قالها مئة مرة حطت خطاياه وإن كانت مثل زبد البحر.'
-      },
       {
         id: 'e_kursi',
         title: 'آية الكرسي',
@@ -195,6 +187,14 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
         count: 1,
         maxCount: 1,
         benefit: 'سؤال خير هذه الليلة والاستعاذة من عذاب القبر والنار.'
+      },
+      {
+        id: 'e_rabbi_alameen',
+        title: 'أمسينا وأمسى الملك لله رب العالمين',
+        text: 'أمسينا وأمسي الملك لله رب العالمين، اللهم إني أسألك خير هذه الليلة، فتحها، ونصرها، ونورها وبركتها، وهداها، وأعوذ بك من شر ما فيها وشر ما بعدها.',
+        count: 1,
+        maxCount: 1,
+        benefit: 'سؤال خير الليلة وفتحها وبركتها ونورها.'
       },
       {
         id: 'e_sayyid',
@@ -237,28 +237,12 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
         benefit: 'من قالها ثلاثاً كان حقاً على الله أن يرضيه يوم القيامة.'
       },
       {
-        id: 'e_hasbi',
-        title: 'الكفاية والتوكل',
-        text: 'حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم.',
-        count: 7,
-        maxCount: 7,
-        benefit: 'من قالها سبعاً كفاه الله ما أهمه من أمر الدنيا والآخرة.'
-      },
-      {
         id: 'e_hamm',
         title: 'الاستعاذة من الهم والحزن',
         text: 'اللَّهُمَّ إني أعوذ بك من الهم والحزن، وأعوذ بك من العجز والكسل، وأعوذ بك من الجبن والبخل، وأعوذ بك من غلبة الدين وقهر الرجال.',
         count: 1,
         maxCount: 1,
         benefit: 'حماية وتفريج من هموم الدين والكسل والضيق.'
-      },
-      {
-        id: 'e_rabbi_alameen',
-        title: 'أمسينا وأمسى الملك لله رب العالمين',
-        text: 'أمسينا وأمسي الملك لله رب العالمين، اللهم إني أسألك خير هذه الليلة، فتحها، ونصرها، ونورها وبركتها، وهداها، وأعوذ بك من شر ما فيها وشر ما بعدها.',
-        count: 1,
-        maxCount: 1,
-        benefit: 'سؤال خير الليلة وفتحها وبركتها ونورها.'
       },
       {
         id: 'e_bismillah',
@@ -285,14 +269,6 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
         benefit: 'من أذكار المساء المأثورة.'
       },
       {
-        id: 'e_tawheed',
-        title: 'لا إله إلا الله وحده لا شريك له',
-        text: 'لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير.',
-        count: 100,
-        maxCount: 100,
-        benefit: 'حرز عظيم من الشيطان ومئات الحسنات.'
-      },
-      {
         id: 'e_ni_mah',
         title: 'شكر النعمة',
         text: 'اللهم ما أمسى بي من نعمة أو بأحد من خلقك، فمنك وحدك لا شريك لك، فلك الحمد ولك الشكر.',
@@ -317,13 +293,37 @@ export default function Adhkar({ selectedCategory, setSelectedCategory }) {
         benefit: 'تكرر 3 مرات لسؤال الله العافية التامة.'
       },
       {
+        id: 'e_hasbi',
+        title: 'الكفاية والتوكل',
+        text: 'حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم.',
+        count: 7,
+        maxCount: 7,
+        benefit: 'من قالها سبعاً كفاه الله ما أهمه من أمر الدنيا والآخرة.'
+      },
+      {
         id: 'e_salawat',
         title: 'الصلاة على النبي',
         text: 'اللهم صل وسلم على نبينا محمد.',
         count: 10,
         maxCount: 10,
         benefit: 'من قالها عشراً أدركته شفاعة النبي ﷺ يوم القيامة.'
-      }
+      },
+      {
+        id: 'e_tasbih',
+        title: 'التسبيح والتحميد',
+        text: 'سبحان الله وبحمده.',
+        count: 100,
+        maxCount: 100,
+        benefit: 'من قالها مئة مرة حطت خطاياه وإن كانت مثل زبد البحر.'
+      },
+      {
+        id: 'e_tawheed',
+        title: 'لا إله إلا الله وحده لا شريك له',
+        text: 'لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير.',
+        count: 100,
+        maxCount: 100,
+        benefit: 'حرز عظيم من الشيطان ومئات الحسنات.'
+      },
     ],
     sleep: [
       {
